@@ -3,12 +3,12 @@
 $host = 'localhost';
 $db   = 'mastissx_newsletter';
 $user = 'mastissx_admin';
-$pass = 'nasteryadmin'; // Replace with the password you just set
+$pass = 'masteryadmin'; // Fixed potential 'n' to 'm' typo. Update if needed!
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // Essential for the try/catch to work!
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // Essential for error trapping
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,
 ];
@@ -16,14 +16,15 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-    echo "error"; // Failed to connect to database
+    // DIAGNOSTIC: Tells you exactly if the username/password/database name is wrong
+    echo "Database Connection Error: " . $e->getMessage();
     exit;
 }
 
 // Check if an email was sent via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     
-    // Sanitize the email just to be safe
+    // Sanitize the email
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -39,20 +40,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
             echo "success";
             
         } catch (\PDOException $e) {
-            // 23000 is the standard SQLSTATE code for an integrity constraint violation (like a duplicate key)
-            if ($e->getCode() == 23000 || $e->getCode() == 1062) {
+            // 23000 is the SQLSTATE code for constraint violation. 
+            // errorInfo[1] == 1062 is MySQL's specific driver code for Duplicate Entry.
+            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
                 echo "duplicate";
             } else {
-                // Some other random database error occurred
-                echo "error"; 
+                // DIAGNOSTIC: Tells you exactly if the table name 'subscribers' or column name is wrong!
+                echo "SQL Query Error: " . $e->getMessage(); 
             }
         }
     } else {
-        // The email format was invalid (e.g., "vishnu@")
         echo "invalid";
     }
 } else {
-    // Someone visited the file directly without submitting a form
-    echo "error";
+    echo "Direct access not allowed.";
 }
 ?>
