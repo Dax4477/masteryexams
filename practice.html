@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Simulator</title>
+    
+    <meta name="description" content="Free Kerala PSC Mock Tests with Mastery Mode. Practice LDC, LGS, and Degree Level exams with instant results.">
+    <meta name="keywords" content="Kerala PSC, LDC Mock Test, KPSC Exam, Degree Level Prelims, GK Questions, SCERT Quiz">
+    <meta name="author" content="MasteryExams">
+    
+    <script>
+        // GUARD SCRIPT: Redirect to Home on Refresh//
+        // This checks if the page was opened via "Reload" or "Refresh"//
+        
+       // if (performance.navigation.type === 1 || (window.performance.getEntriesByType("navigation")[0] && window.performance.getEntriesByType("navigation")[0].type === "reload")) {
+        //    window.location.href = "index.html";
+       // }
+    </script>
+
+<script>
+    try {
+        fetch('/radar.php?track=1&page=' + encodeURIComponent(window.location.pathname))
+        .catch(e => console.log("Radar ping blocked"));
+    } catch(err) {}
+</script>
+
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1014556383468073" crossorigin="anonymous"></script>
+
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+    // Automatically appends the exact millisecond time to the file URL
+    // This forces the browser to bypass the cache every single time!
+    document.write('<script src="exam.js?v=' + Date.now() + '"><\/script>');
+</script>
+    
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
+        .btn-option { transition: all 0.2s; }
+        .btn-option:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .btn-option.correct { background-color: #22c55e !important; color: white !important; border-color: #16a34a !important; }
+        .btn-option.incorrect { background-color: #ef4444 !important; color: white !important; border-color: #dc2626 !important; }
+        .fade-in { animation: fadeIn 0.4s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Lock Styles */
+        .level-card.locked { opacity: 0.5; pointer-events: none; background-color: #e2e8f0; }
+        .level-card.active { border-color: #4f46e5; background-color: #eef2ff; transform: scale(1.02); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        /* Fixed Code */
+        .level-card.passed { border-color: #22c55e; background-color: #f0fdf4; opacity: 0.8; }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen p-4">
+
+<header class="w-full max-w-5xl bg-white p-3 md:p-4 rounded-xl shadow-sm mb-6 flex justify-between items-center sticky top-0 z-40 relative">
+    <div class="flex-shrink-0 mr-2">
+        <h1 class="text-lg md:text-2xl font-bold text-slate-800">Exam Simulator</h1>
+        <p class="text-slate-500 text-[10px] md:text-sm">Strict Progression Mode</p>
+    </div>
+    
+    <div class="flex items-center gap-2">
+        
+        <button id="back-btn-nav" class="hidden text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition flex items-center" onclick="renderCategories()">
+            <span class="text-lg">←</span> 
+            <span class="text-sm font-bold ml-1">Back</span>
+        </button>
+
+        <div class="hidden md:flex gap-2 items-center">
+            <button onclick="clearProgress()" class="text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition flex items-center" title="Reset">
+                <span class="text-lg">🗑️</span> <span class="ml-1 text-sm font-medium">Reset</span>
+            </button>
+            <button onclick="location.reload()" class="text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition flex items-center" title="Refresh">
+                <span class="text-lg">⟳</span> <span class="ml-1 text-sm font-medium">Refresh</span>
+            </button>
+            <a href="index.html" class="text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition flex items-center" title="Home">
+                <span class="text-lg">🏠</span> <span class="ml-1 text-sm font-medium">Home</span>
+            </a>
+        </div>
+
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </div>
+
+    <div id="mobile-menu-dropdown" class="hidden absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden flex-col z-50 md:hidden">
+        <a href="index.html" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 border-b border-slate-50 flex items-center gap-2">
+            <span>🏠</span> Home
+        </a>
+        <button onclick="location.reload()" class="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 border-b border-slate-50 flex items-center gap-2">
+            <span>⟳</span> Refresh
+        </button>
+        <button onclick="clearProgress()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 flex items-center gap-2">
+            <span>🗑️</span> Reset Data
+        </button>
+    </div>
+</header>
+
+<div id="disclaimer-modal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50 fade-in">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 border-l-8 border-indigo-500">
+            <div class="text-5xl mb-4">⚠️</div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">Rules of Engagement</h3>
+            <p class="text-slate-500 mb-6">Welcome to Level 1. This exam operates on <b>Mastery Mode</b>.</p>
+            
+            <div class="bg-slate-50 p-4 rounded-xl mb-6 text-sm space-y-3 text-slate-700 border border-slate-200">
+                <div class="flex gap-3">
+                    <span class="text-indigo-600 font-bold">1.</span>
+                    <span>You need <b>100%</b> to unlock the next level.</span>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-indigo-600 font-bold">2.</span>
+                    <span>Questions are randomized every time.</span>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-indigo-600 font-bold">3.</span>
+                    <span>If you face any issues with questions,use "🚩 Report-issues" option to solve. .</span>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-red-600 font-bold">4.</span>
+                    <span>If you fail a higher level <b>3 times</b>, you will be demoted.</span>
+                </div>
+            </div>
+
+            <button onclick="confirmDisclaimer()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+                I Understand, Start Exam &rarr;
+            </button>
+        </div>
+    </div>
+    
+    
+    <div id="result-lock-modal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50 fade-in bg-black/50 backdrop-blur-sm">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4 border-t-8 border-indigo-600">
+        <div class="text-center mb-6">
+            <div class="text-4xl mb-2">🎉</div>
+            <h3 class="text-2xl font-bold text-slate-800">Exam Finished!</h3>
+            <p class="text-slate-500 text-sm">Enter your details to generate your score card.</p>
+        </div>
+        
+        <form id="lock-form" onsubmit="unlockResults(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Your Name</label>
+                <input type="text" id="user-name" required class="w-full p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="John Doe">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">WhatsApp Number</label>
+                <input type="tel" id="user-phone" required pattern="[0-9]{10}" class="w-full p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="9876543210">
+            </div>
+            <button type="submit" id="unlock-btn" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition shadow-lg">
+                Show My Result &rarr;
+            </button>
+        </form>
+        <p class="text-xs text-center text-slate-400 mt-4">Safe & Secure. We don't spam.<br>We only use this to send your result and important exam updates.</p>
+    </div>
+</div>
+    
+    
+
+
+    <div id="view-booklets" class="w-full max-w-5xl grid md:grid-cols-2 gap-6 fade-in"></div>
+
+    <div id="view-levels" class="hidden w-full max-w-5xl fade-in">
+        <button onclick="backToFolder()" class="mb-4 text-slate-500 hover:text-slate-800">&larr; Back to Booklets</button>
+        <div class="flex justify-between items-end mb-6">
+            <h2 id="level-title" class="text-3xl font-bold text-slate-800">Select Level</h2>
+            <span class="text-sm font-semibold bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">Current Status: <span id="current-status-txt">Level 1</span></span>
+        </div>
+        <div id="levels-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+    </div>
+
+<div id="view-exam" class="hidden w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col fade-in max-h-[90dvh]">
+        
+        <div class="bg-slate-50 border-b p-4 flex justify-between items-center flex-shrink-0">
+            <div>
+                <h3 id="exam-header" class="font-bold text-slate-700">Level X</h3>
+                <span id="progress-txt" class="text-xs text-slate-400 font-bold uppercase">Question 1</span>
+            </div>
+            <div class="text-right">
+                 <span class="text-xs text-slate-400 font-bold uppercase">Target: 100%</span>
+                 <div id="score-display" class="font-bold text-indigo-600">0/0</div>
+            </div>
+        </div>
+        
+        <div class="w-full bg-slate-100 h-2 flex-shrink-0">
+            <div id="progress-bar" class="bg-indigo-600 h-2 transition-all duration-300" style="width: 0%"></div>
+        </div>
+        
+        <div class="p-6 md:p-8 flex-grow overflow-y-auto overscroll-contain">
+            <div id="question-box" class="text-lg md:text-xl font-medium text-slate-800 mb-6 leading-relaxed"></div>
+            <div id="options-box" class="grid gap-3 pb-4"></div>
+        </div>
+        
+        <div class="p-3 md:p-4 bg-slate-50 border-t flex justify-between items-center min-h-[70px] flex-shrink-0 z-10">
+            
+            <button onclick="reportIssue()" class="text-xs font-bold text-slate-400 hover:text-red-500 flex flex-col md:flex-row items-center gap-1 transition p-2" title="Report">
+                <span class="text-lg">🚩</span> <span class="hidden md:inline">Report</span>
+            </button>
+
+            <div id="feedback" class="font-bold text-sm md:text-lg px-2 text-center flex-grow break-words"></div>
+
+            <div class="flex gap-2">
+                <button id="next-btn" onclick="nextQ()" class="hidden bg-slate-800 text-white px-5 py-2 md:px-6 md:py-3 rounded-lg hover:bg-slate-900 transition shadow-lg text-sm md:text-base whitespace-nowrap">
+                    Next &rarr;
+                </button>
+                <button id="finish-btn" onclick="finishExam()" class="hidden bg-indigo-600 text-white px-5 py-2 md:px-6 md:py-3 rounded-lg hover:bg-indigo-700 transition shadow-lg text-sm md:text-base whitespace-nowrap">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div id="view-results" class="hidden w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 text-center mt-10 fade-in border-t-8">
+        <div id="result-icon" class="text-6xl mb-4"></div>
+        <h2 id="result-title" class="text-3xl font-bold text-slate-800 mb-2"></h2>
+        <div class="my-6 p-6 bg-slate-50 rounded-xl">
+            <p class="text-sm text-slate-500 font-bold uppercase">Score</p>
+            <p id="final-fraction" class="text-5xl font-black text-slate-800 mt-2">0/0</p>
+            <p id="result-message" class="text-lg font-medium mt-4"></p>
+        </div>
+        <button onclick="goBackToLevels()" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900">Continue</button>
+    </div>
+
+    <div class="w-full max-w-5xl mx-auto mt-12 px-6 py-8 bg-slate-50 rounded-2xl border border-slate-200">
+        <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">About Exam simulator</h3>
+        <div class="text-gray-600 text-sm leading-relaxed space-y-4">
+            <p>Mastery Mode: Score 100% to unlock the next level.</p>
+        </div>
+    </div>
+    
+        <div class="w-full max-w-5xl mx-auto mt-12 px-6 py-8 bg-slate-50 rounded-2xl border border-slate-200">
+        <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">About Exam simulator</h3>
+        <div class="text-gray-600 text-sm leading-relaxed space-y-4">
+            <p>
+                Exam simulator is a specialized platform designed for aspirants preparing for the Kerala Public Service Commission (KPSC) examinations. Our unique "Mastery Mode" ensures that candidates don't just practice, but truly master the core subjects required for top ranks. Unlike traditional mock tests, our system requires 100% accuracy to progress, reinforcing memory retention through active recall.
+            </p>
+            <p>
+                <strong>Key Topics Covered:</strong><br>
+                Our question bank is meticulously curated from previous year question papers (PYQ) and standard SCERT textbooks. The Kerala Renaissance section covers social reform movements, leaders like Sree Narayana Guru, and Ayyankali. The Indian Constitution module provides insights into Fundamental Rights and Amendments.
+            </p>
+            <p>
+                <strong>General Science & Current Affairs:</strong><br>
+                We emphasize Biology, Physics, and Chemistry topics frequently asked in LDC, LGS, and Degree Level Prelims. Our Current Affairs section is updated to reflect recent developments.
+            </p>
+        </div>
+    </div>
+    
+            <section class="w-full max-w-5xl mx-auto mt-12 px-6 py-8 bg-slate-50 rounded-2xl border border-slate-200">
+        <h2 class="text-xl font-bold text-slate-800 mb-4">Exam Syllabus & Coverage</h2>
+        <div class="grid md:grid-cols-2 gap-8 text-sm text-slate-600">
+            <div>
+                <h3 class="font-bold text-slate-700 mb-2">General Knowledge</h3>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><strong>History:</strong> Kerala Renaissance, Indian Independence Movement.</li>
+                    <li><strong>Geography:</strong> Rivers of India, Kerala Climate, and Soil types.</li>
+                    <li><strong>Constitution:</strong> Fundamental Rights, DPSP, and Amendments.</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-700 mb-2">Science & Current Affairs</h3>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><strong>Biology:</strong> Human Body, Vitamins, and Diseases.</li>
+                    <li><strong>Physics:</strong> Units, Measurements, and Motion.</li>
+                    <li><strong>Recent Events:</strong> Sports Awards, Nobel Prizes, and Government Schemes.</li>
+                </ul>
+            </div>
+        </div>
+        <p class="mt-6 text-xs text-slate-400">
+            *This exam simulation is designed for educational purposes. Questions are randomized to ensure a unique challenge every attempt. Mastery Mode requires 100% accuracy to prevent negative marking habits in real exams.
+        </p>
+    </section>
+
+    <div class="h-12 md:h-0"></div>
+    
+    <div class="w-full max-w-7xl mx-auto mt-6 px-4">
+        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Study Materials</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="renaissance-leaders.html" class="flex items-center gap-3 p-4 bg-white border border-indigo-100 rounded-xl hover:shadow-md hover:border-indigo-300 transition group">
+                <span class="text-2xl">📜</span>
+                <div>
+                    <div class="font-bold text-slate-700 group-hover:text-indigo-600">Renaissance Leaders</div>
+                    <div class="text-xs text-slate-500">Quick revision notes</div>
+                </div>
+            </a>
+
+            <a href="constitution-basics.html" class="flex items-center gap-3 p-4 bg-white border border-emerald-100 rounded-xl hover:shadow-md hover:border-emerald-300 transition group">
+                <span class="text-2xl">⚖️</span>
+                <div>
+                    <div class="font-bold text-slate-700 group-hover:text-emerald-600">Constitution Basics</div>
+                    <div class="text-xs text-slate-500">Key Articles list</div>
+                </div>
+            </a>
+
+            <a href="current-affairs-tips.html" class="flex items-center gap-3 p-4 bg-white border border-rose-100 rounded-xl hover:shadow-md hover:border-rose-300 transition group">
+                <span class="text-2xl">📰</span>
+                <div>
+                    <div class="font-bold text-slate-700 group-hover:text-rose-600">Current Affairs 2025</div>
+                    <div class="text-xs text-slate-500">Preparation strategy</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <footer class="w-full mt-12 mb-6 text-center">
+        <div class="text-sm text-slate-400 space-x-4 mb-2">
+            <a href="privacy.html" class="hover:text-indigo-600 transition">Privacy</a>
+            <span>•</span>
+            <a href="contact.html" class="hover:text-indigo-600 transition">Contact</a>
+            <span>•</span>
+            <a href="about.html" class="hover:text-indigo-600 transition">About</a>
+        </div>
+        <p class="text-xs text-slate-300">&copy; 2025 MasteryExams. All rights reserved.</p>
+    </footer>
+
+
+
+<script>
+        // ================= LOGIC SECTION =================
+        
+        let activeBookletCode = null;
+        let activeCategory = null;
+        let currentLevelIndex = 0; 
+        let userMaxLevelIndex = 0; 
+        let currentExam = []; 
+        let currentIndex = 0;
+        let score = 0;
+        
+        // NEW: Variable to hold data while popup is open
+        let pendingLevelData = null;
+
+        // --- 0. INITIALIZATION ---
+        
+        window.onload = function() {
+            renderCategories();
+        };
+        
+        // --- FIXED BACK BUTTON LOGIC ---
+        function backToFolder() {
+            // Hide Levels, Show Booklets
+            document.getElementById('view-levels').classList.add('hidden');
+            document.getElementById('view-booklets').classList.remove('hidden');
+            
+            // Reload the list of booklets for the active category
+            if(activeCategory) {
+                renderBookletsList(activeCategory);
+            } else {
+                renderCategories();
+            }
+        }
+        
+        
+
+        function renderCategories() {
+            const menuContainer = document.getElementById('view-booklets');
+            menuContainer.innerHTML = ''; 
+            
+            const backBtn = document.getElementById('back-btn-nav');
+            if(backBtn) backBtn.classList.add('hidden');
+
+            if (typeof db === 'undefined') {
+                menuContainer.innerHTML = '<div class="text-red-500 font-bold p-8 text-center">Error:  not found.</div>';
+                return;
+            }
+
+            const categories = {};
+            for (const [code, details] of Object.entries(db)) {
+                const catName = details.category || "Uncategorized";
+                if (!categories[catName]) categories[catName] = 0;
+                categories[catName]++; 
+            }
+
+            for (const [catName, count] of Object.entries(categories)) {
+                const card = document.createElement('div');
+                card.className = `bg-white p-8 rounded-2xl shadow hover:shadow-lg cursor-pointer border-l-8 border-indigo-500 transition transform hover:-translate-y-1`;
+                card.onclick = () => renderBookletsList(catName);
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-2xl font-bold text-slate-800">📁 ${catName}</h2>
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded-full">${count} Files</span>
+                    </div>
+                    <p class="text-gray-500 text-sm">Click to open folder.</p>
+                `;
+                menuContainer.appendChild(card);
+            }
+        }
+
+        function renderBookletsList(categoryName) {
+            activeCategory = categoryName;
+            const menuContainer = document.getElementById('view-booklets');
+            menuContainer.innerHTML = ''; 
+            
+            const backBtn = document.getElementById('back-btn-nav');
+            if(backBtn) {
+                backBtn.classList.remove('hidden');
+                backBtn.onclick = renderCategories;
+                backBtn.innerText = "← Back to Folders";
+            }
+
+            for (const [code, details] of Object.entries(db)) {
+                const thisCat = details.category || "Uncategorized";
+                if (thisCat === categoryName) {
+                    const colors = ['blue', 'emerald', 'purple', 'orange', 'teal', 'pink'];
+                    const color = colors[code % colors.length] || 'blue'; 
+                    const qCount = details.data ? details.data.length : 0;
+
+                    const card = document.createElement('div');
+                    card.className = `bg-white p-8 rounded-2xl shadow hover:shadow-lg cursor-pointer border-l-8 border-${color}-500 transition transform hover:-translate-y-1`;
+                    card.onclick = () => selectBooklet(code);
+                    
+                    card.innerHTML = `
+                        <h2 class="text-xl font-bold text-slate-800">📄 ${details.title}</h2>
+                        <p class="text-sm text-slate-500 mt-2 font-medium">${qCount} Questions</p>
+                        <div class="mt-4 inline-block bg-${color}-100 text-${color}-800 text-xs px-2 py-1 rounded">Open Booklet &rarr;</div>
+                    `;
+                    menuContainer.appendChild(card);
+                }
+            }
+        }
+
+        // --- 1. SELECT BOOKLET ---
+
+        function selectBooklet(code) {
+            activeBookletCode = code;
+            const masterData = db[code].data;
+            const chunkKey = `cseb_chunks_${code}`;
+            const progressKey = `cseb_progress_${code}`;
+            
+            let levelData = JSON.parse(localStorage.getItem(chunkKey));
+            if (!levelData) levelData = [];
+
+            // Smart Update
+            const assignedIDs = new Set(levelData.flat());
+            const newIDs = [];
+            for (let i = 0; i < masterData.length; i++) {
+                if (!assignedIDs.has(i)) newIDs.push(i);
+            }
+
+            if (newIDs.length > 0) {
+                newIDs.sort(() => Math.random() - 0.5);
+                const newChunks = [];
+                for (let i = 0; i < newIDs.length; i += 10) {
+                    newChunks.push(newIDs.slice(i, i + 10));
+                }
+                levelData = [...levelData, ...newChunks];
+                localStorage.setItem(chunkKey, JSON.stringify(levelData));
+            }
+
+            let progress = JSON.parse(localStorage.getItem(progressKey));
+            if (progress === null || progress === undefined) {
+                progress = 0; 
+                localStorage.setItem(progressKey, JSON.stringify(progress));
+            }
+            userMaxLevelIndex = parseInt(progress);
+
+            renderLevels(levelData);
+        }
+
+        function renderLevels(levels) {
+            document.getElementById('view-booklets').classList.add('hidden');
+            document.getElementById('view-levels').classList.remove('hidden');
+            
+            const backBtn = document.getElementById('back-btn-nav');
+            if(backBtn) {
+                backBtn.classList.remove('hidden');
+                backBtn.onclick = () => {
+                    document.getElementById('view-levels').classList.add('hidden');
+                    document.getElementById('view-booklets').classList.remove('hidden');
+                    renderBookletsList(activeCategory); 
+                };
+                backBtn.innerText = "← Back";
+            }
+
+            const grid = document.getElementById('levels-grid');
+            grid.innerHTML = '';
+            
+            const totalQuestions = db[activeBookletCode].data ? db[activeBookletCode].data.length : 0;
+            document.getElementById('level-title').innerHTML = `${db[activeBookletCode].title} <span class="text-lg text-slate-400 font-normal ml-2">(${totalQuestions} Qs)</span>`;
+            
+            if (levels.length === 0) {
+                document.getElementById('current-status-txt').innerText = "Waiting for Update";
+                grid.innerHTML = `<div class="col-span-4 text-center p-12 text-slate-400 italic"><div class="text-6xl mb-4 opacity-50">🦕</div>No Questions Yet</div>`;
+                return;
+            }
+
+            document.getElementById('current-status-txt').innerText = `Level ${userMaxLevelIndex + 1}`;
+
+            levels.forEach((lvlIndices, index) => {
+                if (index > userMaxLevelIndex) return;
+
+                const div = document.createElement('div');
+                div.className = "level-card relative p-6 rounded-xl shadow border-2 transition text-center flex flex-col items-center justify-center min-h-[120px]";
+                
+                let content = "";
+                let statusClass = "";
+                let clickAction = null;
+
+                if (index === userMaxLevelIndex) {
+                    statusClass = "active cursor-pointer border-indigo-500 ring-2 ring-indigo-200 fade-in";
+                    content = `
+                        <div class="text-3xl font-bold text-indigo-600 mb-1">Level ${index + 1}</div>
+                        <div class="text-xs text-indigo-500 font-bold uppercase tracking-wide">Current Target</div>
+                        <div class="mt-2 text-xs bg-indigo-600 text-white px-3 py-1 rounded-full">Play Now</div>
+                    `;
+                    // NEW: Call the disclaimer checker instead of starting immediately
+                    clickAction = () => checkDisclaimerAndStart(lvlIndices, index);
+                } 
+                else if (index < userMaxLevelIndex) {
+                    statusClass = "passed border-emerald-500 bg-emerald-50 cursor-pointer hover:bg-emerald-100 transition";
+                    content = `
+                        <div class="text-xl font-bold text-emerald-800 mb-1">Level ${index + 1}</div>
+                        <div class="text-emerald-600 text-2xl mb-1">✓</div>
+                        <div class="text-[10px] font-bold uppercase bg-emerald-200 text-emerald-800 px-2 py-1 rounded-full">Retry?</div>
+                    `;
+                    // NEW: Call the disclaimer checker here too
+                    clickAction = () => checkDisclaimerAndStart(lvlIndices, index);
+                } 
+                
+                div.className += " " + statusClass;
+                div.innerHTML = content;
+                if (clickAction) div.onclick = clickAction;
+                
+                grid.appendChild(div);
+            });
+        }
+
+        // --- 2. POPUP LOGIC (THE MISSING PART) ---
+
+        function checkDisclaimerAndStart(indices, levelIndex) {
+            // Save data temporarily
+            pendingLevelData = { indices, levelIndex };
+
+            // Show popup ONLY for Level 1
+            if (levelIndex === 0) {
+                document.getElementById('disclaimer-modal').classList.remove('hidden');
+            } else {
+                // Start immediately for other levels
+                startExamProcess();
+            }
+        }
+
+        function confirmDisclaimer() {
+            document.getElementById('disclaimer-modal').classList.add('hidden');
+            startExamProcess();
+        }
+
+        // --- 3. EXAM RUNTIME ---
+
+        function startExamProcess() {
+            const { indices, levelIndex } = pendingLevelData;
+
+            let rawQuestions = indices.map(i => ({...db[activeBookletCode].data[i]}));
+            rawQuestions.sort(() => Math.random() - 0.5);
+            currentExam = rawQuestions.map(q => {
+                let shuffledOpts = [...q.o];
+                shuffledOpts.sort(() => Math.random() - 0.5);
+                return { ...q, o: shuffledOpts };
+            });
+
+            currentLevelIndex = levelIndex;
+            currentIndex = 0;
+            score = 0;
+
+            document.getElementById('view-levels').classList.add('hidden');
+            document.getElementById('view-exam').classList.remove('hidden');
+            const backBtn = document.getElementById('back-btn-nav');
+            if(backBtn) backBtn.classList.add('hidden'); 
+            
+            document.getElementById('exam-header').innerText = `Level ${levelIndex + 1}`;
+            document.getElementById('score-display').innerText = `0/${currentExam.length}`;
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = currentExam[currentIndex];
+            const cleanQ = q.q.replace(/^\d+[\.\)]\s*/, ''); 
+
+            document.getElementById('question-box').innerText = `${currentIndex + 1}. ${cleanQ}`;
+            document.getElementById('progress-txt').innerText = `Q ${currentIndex + 1} / ${currentExam.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / currentExam.length) * 100}%`;
+            
+            const optBox = document.getElementById('options-box');
+            optBox.innerHTML = '';
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('finish-btn').classList.add('hidden');
+
+            q.o.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "btn-option w-full text-left p-4 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold bg-white text-lg";
+                btn.innerText = opt;
+                btn.onclick = () => check(btn, opt, q.a);
+                optBox.appendChild(btn);
+            });
+        }
+
+        function check(btn, selected, correct) {
+            const btns = document.getElementById('options-box').querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+            const feedback = document.getElementById('feedback');
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                score++;
+                feedback.innerHTML = `<span class="text-emerald-600">✓ Correct</span>`;
+            } else {
+                btn.classList.add('incorrect');
+                feedback.innerHTML = `<span class="text-red-500">✗ Answer: ${correct}</span>`;
+                btns.forEach(b => { if (b.innerText === correct) b.classList.add('show-correct'); });
+            }
+            
+            document.getElementById('score-display').innerText = `${score}/${currentExam.length}`;
+
+            if (currentIndex < currentExam.length - 1) document.getElementById('next-btn').classList.remove('hidden');
+            else document.getElementById('finish-btn').classList.remove('hidden');
+        }
+
+        function nextQ() {
+            currentIndex++;
+            showQuestion();
+        }
+
+        // --- 4. RESULTS & 3-STRIKE LOGIC ---
+
+        function finishExam() {
+            
+            // 1. CHECK LOCK STATUS
+            if (!sessionStorage.getItem("resultUnlocked")) {
+                document.getElementById('result-lock-modal').classList.remove('hidden');
+                return; // STOP HERE
+            }
+            
+            
+            
+            document.getElementById('view-exam').classList.add('hidden');
+            document.getElementById('view-results').classList.remove('hidden');
+            
+            const total = currentExam.length;
+            const isPerfect = score === total;
+            const isRetry = currentLevelIndex < userMaxLevelIndex;
+            const progressKey = `cseb_progress_${activeBookletCode}`;
+            const failureKey = `cseb_failures_${activeBookletCode}`;
+
+            document.getElementById('final-fraction').innerText = `${score} / ${total}`;
+            const rTitle = document.getElementById('result-title');
+            const rMsg = document.getElementById('result-message');
+            const rView = document.getElementById('view-results');
+            const rIcon = document.getElementById('result-icon');
+
+            rView.className = "hidden w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 text-center mt-10 fade-in border-t-8";
+
+            if (isPerfect) {
+                rTitle.innerText = "Level Complete!";
+                rTitle.className = "text-3xl font-bold text-emerald-600 mb-2";
+                rView.classList.add('border-emerald-500');
+                rIcon.innerText = "🏆";
+                
+                localStorage.setItem(failureKey, 0);
+                
+                if(isRetry) {
+                    rMsg.innerHTML = "Excellent practice! <br>You still have mastery.";
+                    rMsg.className = "text-emerald-600 font-bold mt-4";
+                } else {
+                    rMsg.innerHTML = "Perfect score! <br>Next level unlocked.";
+                    rMsg.className = "text-emerald-600 font-bold mt-4";
+                    userMaxLevelIndex++;
+                    localStorage.setItem(progressKey, JSON.stringify(userMaxLevelIndex));
+                }
+            } else {
+                rTitle.innerText = "Level Failed";
+                rTitle.className = "text-3xl font-bold text-red-600 mb-2";
+                rView.classList.add('border-red-500');
+                rIcon.innerText = "⚠️";
+                
+                if(isRetry) {
+                    rMsg.innerHTML = "Practice run failed.<br>Progress is safe.";
+                    rMsg.className = "text-slate-600 mt-4";
+                } else {
+                    if (currentLevelIndex === 0) {
+                        rMsg.innerHTML = "Restarting Level 1.";
+                        rMsg.className = "text-slate-600 mt-4";
+                        localStorage.setItem(failureKey, 0);
+                    } else {
+                        let fails = parseInt(localStorage.getItem(failureKey) || "0") + 1;
+                        
+                        if (fails >= 3) {
+                            rMsg.innerHTML = `3 Consecutive Failures.<br><span class='text-red-600 font-bold'>Demoted to previous level.</span>`;
+                            rMsg.className = "text-slate-600 mt-4";
+                            userMaxLevelIndex--; 
+                            localStorage.setItem(progressKey, JSON.stringify(userMaxLevelIndex));
+                            localStorage.setItem(failureKey, 0);
+                        } else {
+                            let left = 3 - fails;
+                            rMsg.innerHTML = `You failed.<br><span class='text-orange-500 font-bold'>Warning: ${left} attempt(s) left before demotion.</span>`;
+                            rMsg.className = "text-slate-600 mt-4";
+                            localStorage.setItem(failureKey, fails);
+                        }
+                    }
+                }
+            }
+            rView.classList.remove('hidden');
+        }
+
+        function goBackToLevels() {
+            document.getElementById('view-results').classList.add('hidden');
+            const chunkKey = `cseb_chunks_${activeBookletCode}`;
+            const levelData = JSON.parse(localStorage.getItem(chunkKey));
+            renderLevels(levelData);
+        }
+
+        function clearProgress() {
+            if(confirm("DANGER: Reset progress?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu-dropdown');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        }
+
+ // --- REPORTING LOGIC (DIRECT WHATSAPP) ---
+        function reportIssue() {
+            // 1. Get current data
+            const currentQ = currentExam[currentIndex];
+            const qText = currentQ.q.replace(/<[^>]*>?/gm, ''); 
+            const bookletName = db[activeBookletCode].title;
+
+            // 2. Create the numbered options list
+            const optionsList = currentQ.o.map((opt, index) => `${index + 1}. ${opt}`).join('%0A');
+
+            // 3. Build the Message String
+            // We leave the "Issue:" field blank so the user can type it in WhatsApp
+            const message = `*🚩 Issue Report*%0A%0ABooklet: ${bookletName}%0AQuestion: ${qText}%0A%0AOptions:%0A${optionsList}%0A%0AIssue: [Type here]`;
+
+            // 4. Open WhatsApp
+            const phoneNumber = "919562551376"; 
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        async function unlockResults(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('unlock-btn');
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+
+            const name = document.getElementById('user-name').value;
+            const phone = document.getElementById('user-phone').value;
+            
+            // Get current exam details
+            const level = `Level ${currentLevelIndex + 1}`;
+            const currentScore = `${score}/${currentExam.length}`;
+
+            try {
+                // Send to PHP
+                const response = await fetch('capture_lead.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, phone: phone, level: level, score: currentScore })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Success! Unlock the exam
+                    sessionStorage.setItem("resultUnlocked", "true");
+                    document.getElementById('result-lock-modal').classList.add('hidden');
+                    finishExam(); // Show the results screen
+                } else {
+                    alert("Database Error: " + result.message);
+                    btn.disabled = false;
+                    btn.innerText = "Try Again";
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                // Fallback: If PHP fails, still let them see results so they don't get angry
+                sessionStorage.setItem("resultUnlocked", "true");
+                document.getElementById('result-lock-modal').classList.add('hidden');
+                finishExam();
+            }
+        }
+        
+        
+    </script>
+</body>
+</html>
